@@ -1,3 +1,4 @@
+using Cinemachine;
 using UnityEngine;
 
 public class LevelGenerator : MonoBehaviour
@@ -22,6 +23,7 @@ public class LevelGenerator : MonoBehaviour
 	//player and objectives
 	[Header("Player")]
 	[SerializeField] private GameObject player;
+	[SerializeField] private CinemachineVirtualCamera playerCamera;
 	[SerializeField] private GameObject goal;
 	private Transform playerStart;
 	private Transform playerEnd;
@@ -55,7 +57,7 @@ public class LevelGenerator : MonoBehaviour
 	{
 		int randomStartIndex = Random.Range(0, 4);
 		transform.position = startPositions[randomStartIndex].position;
-		playerStart = transform;
+		playerStart = startPositions[randomStartIndex];
 		Instantiate(dungeonRooms[randomStartIndex], transform.position, Quaternion.identity, this.transform);
 
 		moveDirection = Random.Range(0, 4);
@@ -153,6 +155,6 @@ public class LevelGenerator : MonoBehaviour
 
 	private void AddPlayerAndGoal()
 	{
-
+		playerCamera.Follow = Instantiate(player, playerStart.position, Quaternion.identity).transform;
 	}
 }
