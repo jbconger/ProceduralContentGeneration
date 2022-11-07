@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class LevelGenerator : MonoBehaviour
@@ -18,7 +16,6 @@ public class LevelGenerator : MonoBehaviour
 	private int moveDirection;
 	private int downCounter;
 	private float roomSize = 10.0f;
-	[SerializeField] private float startTimeBetweenRooms = 0.25f;
 	private bool stopLevelGeneration = false;
 	[SerializeField] public LayerMask room;
 
