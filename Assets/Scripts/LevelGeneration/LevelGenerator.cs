@@ -25,6 +25,7 @@ public class LevelGenerator : MonoBehaviour
 	[SerializeField] private GameObject player;
 	[SerializeField] private CinemachineVirtualCamera playerCamera;
 	[SerializeField] private GameObject goal;
+	[SerializeField] private GoalMenu goalMenu;
 	private Transform playerStart;
 	private Transform playerEnd;
 
@@ -156,5 +157,8 @@ public class LevelGenerator : MonoBehaviour
 	private void AddPlayerAndGoal()
 	{
 		playerCamera.Follow = Instantiate(player, playerStart.position, Quaternion.identity).transform;
+
+		Instantiate(goal, playerEnd.position, Quaternion.identity);
+		Goal.onGoalTrigger.AddListener(goalMenu.DisplayGoalMenu);
 	}
 }
