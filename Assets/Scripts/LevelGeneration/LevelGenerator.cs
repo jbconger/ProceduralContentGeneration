@@ -39,103 +39,131 @@ public class LevelGenerator : MonoBehaviour
 
 	private void BuildDungeon()
 	{
+		NewStart();
 		// build main path
-		BuildMainPath();
-		// fill remaining rooms
+		while(!stopLevelGeneration)
+			GeneratePath();
 		GenerateRemainingRooms();
 		// place player and goal
 		AddPlayerAndGoal();
 	}
 
-	private void BuildMainPath()
+	private void NewStart()
 	{
-		PlaceStartingRoom();
+		int start = Random.Range(0, 5);
+		transform.position = startPositions[start].position;
+		playerStart = startPositions[start];
 
-		while (!stopLevelGeneration)
-			MoveAndPlaceRooms();
+		Instantiate(dungeonRooms[1], transform.position, Quaternion.identity);
+
+		//pick a direction to move
+		// 0 - down, 1 - left, 2 - right
+		if (transform.position.x - roomSize < minX)
+			moveDirection = 2;
+		else
+			moveDirection = 1;
+		//moveDirection = Random.Range(1, 3); // move left or right
 	}
-	private void PlaceStartingRoom()
-	{
-		int randomStartIndex = Random.Range(0, 4);
-		transform.position = startPositions[randomStartIndex].position;
-		playerStart = startPositions[randomStartIndex];
-		Instantiate(dungeonRooms[randomStartIndex], transform.position, Quaternion.identity, this.transform);
 
-		moveDirection = Random.Range(0, 4);
-	}
-
-	private void MoveAndPlaceRooms()
+	private void GeneratePath()
 	{
 		switch (moveDirection)
 		{
-			case 1: // move right
-			case 2:
-				if (transform.position.x < maxX)
+			case 0: // down
+				if (transform.position.y - roomSize < minY)
 				{
-					downCounter = 0;
-
-					transform.position = new Vector2(transform.position.x + roomSize, transform.position.y);
-
-					int randomRoomIndex = Random.Range(0, dungeonRooms.Length); // grab a room to spawn
-					Instantiate(dungeonRooms[randomRoomIndex], transform.position, Quaternion.identity);
-
-					moveDirection = Random.Range(0, 3); // continue down or right
+					//stop level generation
+					playerEnd = transform;
+					stopLevelGeneration = true;
 				}
 				else
-					moveDirection = 0;
-				break;
-			case 3: // move left
-			case 4:
-				if (transform.position.x > minX)
 				{
-					downCounter = 0;
+					transform.position = new Vector3(transform.position.x, transform.position.y - roomSize);
 
-					transform.position = new Vector2(transform.position.x - roomSize, transform.position.y);
-
-					int randomRoomIndex = Random.Range(0, dungeonRooms.Length); // grab a room to spawn
-					Instantiate(dungeonRooms[randomRoomIndex], transform.position, Quaternion.identity);
-
-					moveDirection = Random.Range(3, 6); // continue down or left
-				}
-				else
-					moveDirection = 0;
-				break;
-			default: // move down
-				downCounter++;
-
-				if (transform.position.y > minY)
-				{
-					Collider2D previousRoom = Physics2D.OverlapCircle(transform.position, 1, room); // check for opening in previous room
-					if (previousRoom && (previousRoom.GetComponent<Room>().roomType == Room.RoomType.LR || previousRoom.GetComponent<Room>().roomType == Room.RoomType.LRT))
+					if (Random.Range(0, 2) == 1) // coin toss
 					{
-						// replace room if it does not have an opening
-						if (downCounter >= 2)
+						Instantiate(dungeonRooms[4], transform.position, Quaternion.identity);
+						moveDirection = Random.Range(1, 3);
+					}
+					else
+					{
+						Instantiate(dungeonRooms[4], transform.position, Quaternion.identity);
+						moveDirection = Random.Range(0, 3);
+					}
+				}
+				break;
+			case 1: // left
+				if (transform.position.x - roomSize < minX)
+				{
+					moveDirection = 0;
+				}
+				else
+				{
+					transform.position = new Vector3(transform.position.x - roomSize, transform.position.y);
+
+					if (CoinToss())
+					{
+						moveDirection = 0; // moving down, spawn a room with a bottom opening
+
+						if (CoinToss())
+							Instantiate(dungeonRooms[2], transform.position, Quaternion.identity);
+						else
+							Instantiate(dungeonRooms[4], transform.position, Quaternion.identity);
+					}
+					else
+					{
+						moveDirection = 1; // moving left, spawn any room
+
+						if (transform.position.x - roomSize < minX)
 						{
-							previousRoom.GetComponent<Room>().DestroyRoom();
-							Instantiate(dungeonRooms[3], previousRoom.gameObject.transform.position, Quaternion.identity);
+							if (CoinToss())
+								Instantiate(dungeonRooms[2], transform.position, Quaternion.identity);
+							else
+								Instantiate(dungeonRooms[4], transform.position, Quaternion.identity);
 						}
 						else
 						{
-							previousRoom.GetComponent<Room>().DestroyRoom();
-
-							if (Random.Range(0, 10) % 2 == 1)
-								Instantiate(dungeonRooms[1], transform.position, Quaternion.identity);
-							else
-								Instantiate(dungeonRooms[3], transform.position, Quaternion.identity);
+							int room = Random.Range(1, 5);
+							Instantiate(dungeonRooms[room], transform.position, Quaternion.identity);
 						}
 					}
-
-					transform.position = new Vector2(transform.position.x, transform.position.y - roomSize);
-
-					int randomRoomIndex = Random.Range(2, 4);
-					Instantiate(dungeonRooms[randomRoomIndex], transform.position, Quaternion.identity);
-
-					moveDirection = Random.Range(0, 5); // continue right, down, or left
+				}
+				break;
+			case 2: // right
+				if (transform.position.x + roomSize > maxX)
+				{
+					moveDirection = 0;
 				}
 				else
 				{
-					playerEnd = transform;
-					stopLevelGeneration = true;
+					transform.position = new Vector3(transform.position.x + roomSize, transform.position.y);
+
+					if (CoinToss())
+					{
+						moveDirection = 0; // moving down, spawn a room with a bottom opening
+
+						if (CoinToss())
+							Instantiate(dungeonRooms[2], transform.position, Quaternion.identity);
+						else
+							Instantiate(dungeonRooms[4], transform.position, Quaternion.identity);
+					}
+					else
+					{
+						moveDirection = 2; // moving right, spawn any room
+
+						if (transform.position.x + roomSize > maxX)
+						{
+							if (CoinToss())
+								Instantiate(dungeonRooms[2], transform.position, Quaternion.identity);
+							else
+								Instantiate(dungeonRooms[4], transform.position, Quaternion.identity);
+						}
+						else
+						{
+							int room = Random.Range(1, 5);
+							Instantiate(dungeonRooms[room], transform.position, Quaternion.identity);
+						}
+					}
 				}
 				break;
 		}
@@ -160,5 +188,13 @@ public class LevelGenerator : MonoBehaviour
 
 		Instantiate(goal, playerEnd.position, Quaternion.identity);
 		Goal.onGoalTrigger.AddListener(goalMenu.DisplayGoalMenu);
+	}
+
+	private bool CoinToss()
+	{
+		if (Random.Range(0, 2) == 1)
+			return true;
+		else
+			return false;
 	}
 }
