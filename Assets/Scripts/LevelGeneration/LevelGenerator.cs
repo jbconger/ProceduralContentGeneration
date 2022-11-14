@@ -185,6 +185,7 @@ public class LevelGenerator : MonoBehaviour
 	private void AddPlayerAndGoal()
 	{
 		playerCamera.Follow = Instantiate(player, playerStart.position, Quaternion.identity).transform;
+		Player.OnPlayerDeath.AddListener(StopCameraFollow);
 
 		Instantiate(goal, playerEnd.position, Quaternion.identity);
 		Goal.onGoalTrigger.AddListener(goalMenu.DisplayGoalMenu);
@@ -196,5 +197,10 @@ public class LevelGenerator : MonoBehaviour
 			return true;
 		else
 			return false;
+	}
+	
+	public void StopCameraFollow()
+	{
+		playerCamera.Follow = null;
 	}
 }

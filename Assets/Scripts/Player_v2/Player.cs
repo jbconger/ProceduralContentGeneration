@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class Player : MonoBehaviour
 {
@@ -60,7 +61,14 @@ public class Player : MonoBehaviour
 	[SerializeField] public float fallMultiplier = 9;
 	[SerializeField] public float jumpVelocityFalloff = 12;
 
+	public static UnityEvent OnPlayerDeath;
 	#endregion
+
+	private void Awake()
+	{
+		if (OnPlayerDeath == null)
+			OnPlayerDeath = new UnityEvent();
+	}
 
 	void Start()
 	{
@@ -103,5 +111,13 @@ public class Player : MonoBehaviour
 
 		isFacingLeft = inputs.rawX != 1 && (inputs.rawX == -1 || isFacingLeft);
 		sprite.flipX = isFacingLeft;
+	}
+
+	public void KillPlayer()
+	{
+		anim.SetBool("Dead", true);
+		playerCollider.enabled = false;
+		OnPlayerDeath.Invoke();
+		Destroy(this);
 	}
 }

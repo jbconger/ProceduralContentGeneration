@@ -7,6 +7,7 @@ public class GoalMenu : MonoBehaviour
 	private void Start()
 	{
 		Goal.onGoalTrigger.AddListener(DisplayGoalMenu);
+		Player.OnPlayerDeath.AddListener(DisplayGoalMenu);
 	}
 
 	public void DisplayGoalMenu()
