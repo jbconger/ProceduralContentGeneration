@@ -248,7 +248,7 @@ MonoBehaviour:
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: RandomDungeon
+          m_StringArgument: RandomDungeon2
           m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 236927788}
@@ -1288,7 +1288,9 @@ MonoBehaviour:
       m_Calls: []
   m_text: 'Movement: L/R Arrow Keys
 
-    Jump: Space'
+    Jump: Space
+
+    Reload Level: R Key'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 9244777036e5d0c4097d45d9e17da212, type: 2}
   m_sharedMaterial: {fileID: 4928480491744084856, guid: 9244777036e5d0c4097d45d9e17da212, type: 2}
