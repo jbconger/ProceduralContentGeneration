@@ -2787,7 +2787,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Level Complete
+  m_text: Game Over
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 9244777036e5d0c4097d45d9e17da212, type: 2}
   m_sharedMaterial: {fileID: 4928480491744084856, guid: 9244777036e5d0c4097d45d9e17da212, type: 2}
